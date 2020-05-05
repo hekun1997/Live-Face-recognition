@@ -5,8 +5,8 @@ from keras.layers import Input, Dense, Dropout , Flatten
 from keras.models import Model
 from keras.utils import plot_model
 from keras.optimizers import Adam
-
-from vgg16.vggface.vgg_face import VGGFace
+from keras.callbacks import ModelCheckpoint
+from third_model.vgg_face import VGGFace
 
 
 
@@ -20,9 +20,11 @@ datagen = ImageDataGenerator(
         horizontal_flip=True,
         fill_mode='nearest')
 
-TRAIN_DIRECTORY = r'C:\Users\administered\PycharmProjects\untitled1\vgg16\faces'
-TARGET_SIZE = (224,224)
-INPUT_SHAPE = (224,224,3)
+TRAIN_DIRECTORY = r'C:\Users\administered\PycharmProjects\Live-Face-recognition\images\train'
+VALIDATION_DIRECTORY = r'C:\Users\administered\PycharmProjects\Live-Face-recognition\images\validation'
+MODEL_PATH = r'C:\Users\administered\PycharmProjects\Live-Face-recognition\data\model\Model_VGGFace.h5'
+TARGET_SIZE = (224, 224)
+INPUT_SHAPE = (224, 224, 3)
 NB_CLASSES = 2
 
 train_generator = datagen.flow_from_directory(
@@ -35,13 +37,21 @@ train_generator = datagen.flow_from_directory(
     seed=42
 )
 
+validation_generator = datagen.flow_from_directory(
+    directory=VALIDATION_DIRECTORY,
+    target_size=TARGET_SIZE,
+    color_mode="rgb",
+    batch_size=32,
+    class_mode="categorical",
+    shuffle=False
+)
+
 dictionary = train_generator.class_indices
 dictionary = dict (zip(dictionary.values(),dictionary.keys()))
-np.save('my_file.npy', dictionary) 
+np.save('my_file.npy', dictionary)
 
 def baseline_model_vgg():
-
-    input_1 = Input(shape = INPUT_SHAPE)
+    #input_1 = Input(shape=INPUT_SHAPE)
     base_model = VGGFace(model='vgg16' , include_top = False , input_shape =INPUT_SHAPE , pooling='avg')
     last_layer = base_model.get_layer('pool5').output
     x = Flatten(name='flatten')(last_layer)
@@ -75,10 +85,9 @@ def baseline_model_resnet():
 if __name__ == "__main__":
     model = baseline_model_vgg()
     plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+    checkpointer = ModelCheckpoint(filepath=MODEL_PATH, verbose=1, save_best_only=True)
     history = model.fit_generator(
-	      train_generator,
+	      train_generator, validation_data=validation_generator,
 	      steps_per_epoch = train_generator.samples/train_generator.batch_size ,
-	      epochs=20,
-	      verbose=1)
-
-    model.save('Model_VGGFace.h5')
+	      epochs=20, callbacks=[checkpointer],validation_steps=100,
+	      verbose=1, workers=10)

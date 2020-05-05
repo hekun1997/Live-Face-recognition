@@ -58,4 +58,4 @@ def CatchPICFromVideo(window_name, camera_idx, catch_pic_num, path_name):
 
 
 if __name__ == '__main__':
-     CatchPICFromVideo("pick face", 0, 10, r'C:\Users\administered\PycharmProjects\Live-Face-recognition\images\validation')
+     CatchPICFromVideo("pick face", 0, 300, r'C:\Users\administered\PycharmProjects\Live-Face-recognition\images\validation\lijie')
