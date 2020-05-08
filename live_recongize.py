@@ -2,10 +2,10 @@ from keras.models import load_model
 import numpy as np
 import cv2
 
-MODEL_PATH = r'C:\Users\administered\PycharmProjects\untitled1\vgg16\Model_VGGFace_vgg.h5'
-MODEL_DATA = r'C:\Users\administered\PycharmProjects\untitled1\vgg16\my_file.npy'
+MODEL_PATH = r'data/model/Model_VGGFace.h5'
+MODEL_DATA = r'labels.npy'
+FACE_CASCADE = r'data/haarcascade_frontalface_alt.xml'
 IMAGE_SIZE = 224
-FACE_CASCADE = r'C:\Users\administered\Desktop\1\pycharm\code\opencv-master\data\haarcascades\haarcascade_frontalface_alt.xml'
 
 class LiveRecongize(object):
 
@@ -13,7 +13,7 @@ class LiveRecongize(object):
         self.model = load_model(MODEL_PATH)
 
     def recongize(self):
-        name_dict = np.load('my_file.npy', allow_pickle='TRUE').item()
+        name_dict = np.load(MODEL_DATA, allow_pickle='TRUE').item()
         classfier = cv2.CascadeClassifier(FACE_CASCADE)
 
         cameraCapture = cv2.VideoCapture(0)

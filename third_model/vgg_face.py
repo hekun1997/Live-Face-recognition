@@ -6,7 +6,7 @@
 
 '''
 from __future__ import print_function
-from vggface.models import RESNET50, VGG16, SENET50
+from third_model.models import RESNET50, VGG16, SENET50
 
 
 def VGGFace(include_top=True, model='vgg16', weights='vggface',
