@@ -6,6 +6,7 @@ from keras.models import Model
 from keras.utils import plot_model
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
+from keras.applications.vgg16 import VGG16
 from third_model.vgg_face import VGGFace
 
 TRAIN_DIRECTORY = r'images'
@@ -55,7 +56,7 @@ def baseline_model_vgg():
     base_model = VGGFace(model='vgg16' , include_top = False , input_shape =INPUT_SHAPE , pooling='avg')
     last_layer = base_model.get_layer('pool5').output
     x = Flatten(name='flatten')(last_layer)
-    x = Dense(100 , activation = 'relu')(x)
+    x = Dense(100, activation='relu')(x)
     x = Dropout(0.01)(x)
     out = Dense(NB_CLASSES, activation='softmax', name='classifier')(x)
     model = Model(base_model.input, out)
@@ -65,11 +66,24 @@ def baseline_model_vgg():
 
     return model
 
+def build_vgg_model():
+    base_model = VGG16(include_top=False, weights='imagenet', input_shape=(224, 224, 3))
+    model = Flatten(name='flatten')(base_model.output)
+    model = Dense(100, activation='relu')(model)
+    model = Dropout(0.01)(model)
+    model = Dense(NB_CLASSES, activation='softmax', name='classifier')(model)
+    vgg_model = Model(inputs=base_model.input, outputs=model, name='vgg')
+
+    vgg_model.compile(loss='categorical_crossentropy', metrics=['acc'], optimizer=Adam(0.00001))
+    model.summary()
+    return model
+
 if __name__ == "__main__":
-    model = baseline_model_vgg()
+    #model = baseline_model_vgg()
+    model = build_vgg_model()
     plot_model(model, to_file='data/model/model_plot.png', show_shapes=True, show_layer_names=True)
     checkpointer = ModelCheckpoint(filepath=MODEL_PATH, verbose=1, save_best_only=True)
-    history = model.fit_generator(
+    model.fit_generator(
 	      train_generator, validation_data=validation_generator,
 	      steps_per_epoch = train_generator.samples/train_generator.batch_size ,
 	      epochs=20, callbacks=[checkpointer],validation_steps=100,
