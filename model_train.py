@@ -75,8 +75,8 @@ def build_vgg_model():
     vgg_model = Model(inputs=base_model.input, outputs=model, name='vgg')
 
     vgg_model.compile(loss='categorical_crossentropy', metrics=['acc'], optimizer=Adam(0.00001))
-    model.summary()
-    return model
+    vgg_model.summary()
+    return vgg_model
 
 if __name__ == "__main__":
     #model = baseline_model_vgg()

@@ -17,12 +17,12 @@ def CatchPICFromVideo(window_name, camera_idx, catch_pic_num, path_name):
 
         grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # 人脸检测，1.2和2分别为图片缩放比例和需要检测的有效点数
-        faceRects = classfier.detectMultiScale(grey, scaleFactor=1.2, minNeighbors=3, minSize=(32, 32))
+        faceRects = classfier.detectMultiScale(grey, scaleFactor=1.2, minNeighbors=5, minSize=(32, 32))
         if len(faceRects) > 0:
             for faceRect in faceRects:
                 x, y, w, h = faceRect
                 img_name = '%s/%d.jpg' % (path_name, num)
-                image = cv2.resize(grey[y - 10: y + h + 10, x - 10: x + w + 10], (256, 256))
+                image = cv2.resize(frame[y - 10: y + h + 10, x - 10: x + w + 10], (256, 256))
                 cv2.imwrite(img_name, image)
 
                 num += 1
@@ -46,4 +46,4 @@ def CatchPICFromVideo(window_name, camera_idx, catch_pic_num, path_name):
 
 
 if __name__ == '__main__':
-     CatchPICFromVideo("pick face", 0, 1000, IMAGES_PATH)
+     CatchPICFromVideo("pick face", 1, 1000, IMAGES_PATH)
