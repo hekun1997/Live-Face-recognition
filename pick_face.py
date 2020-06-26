@@ -1,10 +1,11 @@
 import cv2
 
 CASCADE_PATH = r'data/haarcascade_frontalface_alt.xml'
-IMAGES_PATH = r'images/hekun'
+IMAGES_PATH = r'images/marvin'
+
 
 def CatchPICFromVideo(window_name, camera_idx, catch_pic_num, path_name):
-    cv2.namedWindow(window_name)
+    # cv2.namedWindow(window_name)
     cap = cv2.VideoCapture(camera_idx)
     classfier = cv2.CascadeClassifier(CASCADE_PATH)
 
@@ -46,4 +47,4 @@ def CatchPICFromVideo(window_name, camera_idx, catch_pic_num, path_name):
 
 
 if __name__ == '__main__':
-     CatchPICFromVideo("pick face", 1, 1000, IMAGES_PATH)
+    CatchPICFromVideo("pick face", 0, 1000, IMAGES_PATH)

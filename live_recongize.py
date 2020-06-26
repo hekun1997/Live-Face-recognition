@@ -24,19 +24,21 @@ class LiveRecongize(object):
 
         while success and cv2.waitKey(1) == -1:
             success, frame = cameraCapture.read()
-            faces = classfier.detectMultiScale(frame, 1.3, 5) #识别人脸
+            faces = classfier.detectMultiScale(frame, 1.3, 5)  # 识别人脸
             for (x, y, w, h) in faces:
                 face = frame[y - 10: y + h + 10, x - 10: x + w + 10]
                 face = cv2.resize(face, (224, 224))
                 face = np.reshape(face, [1, 224, 224, 3])
                 preds = self.model.predict(face)
                 index = np.argmax(preds)
+                color = (255, 0, 0)
                 if float(preds[0][index]) > 0.8:  # 如果模型认为概率高于80%则显示为模型中已有的label
                     show_name = name_dict[index]
                 else:
+                    color = (0, 0, 0)
                     show_name = 'Stranger'
                 cv2.putText(frame, show_name, (x, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, 255, 2)  # 显示名字
-                frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)  # 在人脸区域画一个正方形
+                frame = cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)  # 在人脸区域画一个正方形
             cv2.imshow("Camera", frame)
 
         cameraCapture.release()

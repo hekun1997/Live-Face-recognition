@@ -79,12 +79,13 @@ def build_vgg_model():
     return vgg_model
 
 if __name__ == "__main__":
-    #model = baseline_model_vgg()
-    model = build_vgg_model()
+    model = baseline_model_vgg()
+    #model = build_vgg_model()
+    model.summary()
     plot_model(model, to_file='data/model/model_plot.png', show_shapes=True, show_layer_names=True)
     checkpointer = ModelCheckpoint(filepath=MODEL_PATH, verbose=1, save_best_only=True)
     model.fit_generator(
 	      train_generator, validation_data=validation_generator,
 	      steps_per_epoch = train_generator.samples/train_generator.batch_size ,
-	      epochs=20, callbacks=[checkpointer],validation_steps=100,
-	      verbose=1, workers=10)
+	      epochs=30, callbacks=[checkpointer], validation_steps=100,
+	      verbose=1, workers=20)
